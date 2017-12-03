@@ -4,7 +4,7 @@ services:
   nginx:
     build: ./nginx
     ports:
-      - "2100:2100"
+      - "3100:3100"
     links:
       - web
       - api

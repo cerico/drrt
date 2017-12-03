@@ -1,0 +1,42 @@
+version: '2'
+
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - "2100:2100"
+    links:
+      - web
+      - api
+  web:
+    build: ./web
+    volumes:
+      - ./web:/usr/src/app
+    ports:
+      - "3401:3401"
+    command: "npm run dev"
+    links:
+      - api
+  api:
+    build: ./api
+    environment:
+      RAILS_ENV: 'development'
+    volumes:
+      - ./api:/usr/src/app
+    command: rails server -p 3001 -b 0.0.0.0
+    ports:
+      - '3001:3001'
+    links:
+      - db
+
+  db:
+    image: kiasaki/alpine-postgres:9.5
+    environment:
+      POSTGRES_PASSWORD: 'postgres'
+    volumes_from:
+      - db_data
+
+  db_data:
+    image: busybox
+    volumes:
+      - ../db_data/:/var/lib/postgresql/data:rw
